@@ -5,22 +5,22 @@ clc
 [motors] = Motor_Data();            %Load all motor data
 
 % Input arrays of payload masses and delta-Vs to observe trends
-mass_pay = linspace(0,500,100);     %[kg] payload mass array
-dV = linspace(1500,2500,100);      %[m/s] delta V of burn array
+mass_pay = linspace(150,500,100);     %[kg] payload mass array
+dV = linspace(50,1000,100);      %[m/s] delta V of burn array
 
 %Input a particular case to get numerical outputs
 payload = 250;  %[kg]
 delta_v = 200;  %[m/s]
 
 %Input boundary conditions to filter motors
-max_t_burn = 60*24*3600;            %[s]    maximum burn time allowable
-min_thrust = 0.1;                   %[N]    minimum thrust of interest
-max_thrust = 5000;                  %[N]    maximum thrust of interest
-min_isp = 290;                      %[s]    maximum isp of interest
+max_t_burn = 30*24*3600;            %[s]    maximum burn time allowable
+min_thrust = 0;                   %[N]    minimum thrust of interest
+max_thrust = 500;                  %[N]    maximum thrust of interest
+min_isp = 200;                      %[s]    maximum isp of interest
 max_isp = inf;                      %[s]    minimum isp of interest
-max_power = 2e5;                   %[W]    maximum power consumption allowable
-classes = ["chemical biprop", "ion", "hall effect"];
-% all classes - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect"
+max_power = 5000;                   %[W]    maximum power consumption allowable
+classes = ["chemical monoprop", "ion", "hall effect", "electro-thermal"];
+% all    - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"
 
 %% FILTERING OF INPUT DATA
 %Incompatible motors are filtered by thrust and power constraints.
@@ -89,7 +89,8 @@ end
 % Need to add more or use random colours if large number of motors will be
 % plotted at one time
 colours = [1 0 0; 1 0 1; 0 1 1; 1 1 0; 0 1 0; 0 0 1; 0, 0.4470, 0.7410; ...
-    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; 0.25, 0.25, 0.25];
+    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; 0.25, 0.25, 0.25; ...
+    rand(), rand(), rand(); rand() rand() rand(); rand() rand() rand()];
 %% CALCULATE SYSTEM PROPERTIES
 clearvars i
 for i = 1:length(motors)  %calculate mass, volume and burn time ARRAYS
@@ -169,7 +170,7 @@ hold on
 clearvars i
 for i = 1:length(motors)
     surf(blank1, blank2, blank3, 'LineStyle', 'none','FaceColor',colours(i,:),'DisplayName', ...
-        [motors(i).name ' - '  motors(i).class ' - ' num2str(motors(i).thrust,4) ' N' ' (' motors(i).state ')'])
+        [motors(i).name ' - '  motors(i).class ' - ' num2str(motors(i).thrust,5) ' N' ' (' motors(i).state ')'])
 end
 
 set(gca,'Visible','Off')
