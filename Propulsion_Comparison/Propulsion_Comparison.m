@@ -5,8 +5,8 @@ clc
 [motors] = Motor_Data();            %Load all motor data
 
 % Input arrays of payload masses and delta-Vs to observe trends
-mass_pay = linspace(150,500,100);     %[kg] payload mass array
-dV = linspace(50,1000,100);      %[m/s] delta V of burn array
+mass_pay = linspace(0,5000,500);     %[kg] payload mass array
+dV = linspace(0,3000,500);      %[m/s] delta V of burn array
 
 %Input a particular case to get numerical outputs
 payload = 250;  %[kg]
@@ -15,13 +15,12 @@ delta_v = 200;  %[m/s]
 %Input boundary conditions to filter motors
 max_t_burn = 30*24*3600;            %[s]    maximum burn time allowable
 min_thrust = 0;                   %[N]    minimum thrust of interest
-max_thrust = 500;                  %[N]    maximum thrust of interest
-min_isp = 200;                      %[s]    maximum isp of interest
+max_thrust = inf;                  %[N]    maximum thrust of interest
+min_isp = 0;                      %[s]    maximum isp of interest
 max_isp = inf;                      %[s]    minimum isp of interest
 max_power = 5000;                   %[W]    maximum power consumption allowable
-classes = ["chemical monoprop", "ion", "hall effect", "electro-thermal"];
+classes = ["chemical solid"];
 % all    - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"
-
 %% FILTERING OF INPUT DATA
 %Incompatible motors are filtered by thrust and power constraints.
 %Thrust is throttled down if the motor maximum thrust is too high or the
@@ -154,7 +153,7 @@ xlabel('Payload Mass (kg)')
 ylabel('Burn Delta V (m/s)')
 zlabel('Burn Time (s)')
 view(45,15)
-zlim([0 inf])
+zlim([0 max_t_burn*2])
 axis vis3d
 grid on
 set(gca,'ZScale','log')
