@@ -19,8 +19,9 @@ max_thrust = inf;                  %[N]    maximum thrust of interest
 min_isp = 0;                      %[s]    maximum isp of interest
 max_isp = inf;                      %[s]    minimum isp of interest
 max_power = 5000;                   %[W]    maximum power consumption allowable
-classes = ["chemical solid"];
+classes = ["chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"];
 % all    - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"
+
 %% FILTERING OF INPUT DATA
 %Incompatible motors are filtered by thrust and power constraints.
 %Thrust is throttled down if the motor maximum thrust is too high or the
@@ -84,12 +85,22 @@ while i <= length(motors)
     end
  
 end
-% Creating an array of default MATLAB colours for the surface plots to use
-% Need to add more or use random colours if large number of motors will be
-% plotted at one time
+
+%% CREATING COLOURS FOR SURFACE PLOTS
+% Creating an array of MATLAB colours for the surface plots to use. Seems
+% shitty but I couldn't find another way quickly
+clearvars i
+rand_colours = zeros(50,3);
+for i = 1:50
+    rand_colours(i,1) = rand();
+    rand_colours(i,2) = rand();
+    rand_colours(i,3) = rand();
+end
+
 colours = [1 0 0; 1 0 1; 0 1 1; 1 1 0; 0 1 0; 0 0 1; 0, 0.4470, 0.7410; ...
-    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; 0.25, 0.25, 0.25; ...
-    rand(), rand(), rand(); rand() rand() rand(); rand() rand() rand()];
+    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; ...
+    0.25, 0.25, 0.25; rand_colours];
+
 %% CALCULATE SYSTEM PROPERTIES
 clearvars i
 for i = 1:length(motors)  %calculate mass, volume and burn time ARRAYS
@@ -104,6 +115,7 @@ for i = 1:length(motors)  %calculate mass, volume, and burn time PARTICULAR CASE
     disp(motors(i).name)
     disp(motors(i).case)
 end
+
 %% PROPULSION STAGE MASS PLOT
 %Plots the sum of propellant mass and motor hardware. Mass of plumbing,
 % tanks, pressurant, pumps etc are not considered
@@ -120,6 +132,7 @@ axis vis3d
 grid on
 view(45,15)
 hold off
+
 %% PROPELLANT VOLUME PLOT
 %Plots the volume of propellant required. Assumptions regarding density and
 % pressure are stated in the Motor_Data.m input file
@@ -136,6 +149,7 @@ axis vis3d
 grid on
 view(45,15)
 hold off
+
 %% BURN TIME PLOT
 %Plots the time required to complete the burn for given delta v and
 % payload mass combinations. Note that the z axis is logarithmic for
@@ -158,6 +172,7 @@ axis vis3d
 grid on
 set(gca,'ZScale','log')
 hold off
+
 %% DUMMY PLOT
 % Shitty workaround in order to display the legend separate to figures
 blank1 = NaN(1,length(mass_pay));
