@@ -1,32 +1,25 @@
 %% LIQUID BIPROP SIZING
+
 clear all; close all; clc
 
 %% Initial data
-
 % MOOG - Leros 1b
-
 g0 = 9.807;
-%OF = 0.85;
-Isp = 317;
-T = 635;
+Isp = 318; %s
+T = 420; %N
 m_dot = T/(Isp*g0);
 P_ch = 1.62e6; %235 psia
 
 Mfin = 6*300+1*800; % mass of a stack
 
-rho_ox = 1.44246e-3; %kg/cm^3 (should check MON: Mixed Oxides of Nitrogen)
-rho_fuel = 1.01e-3; %kg/cm^3:(N2H4)
+%% Storage temperature
+Temp= 293.15;
 
-% 400 N bi-propellantAIRBUS thruster
+% Fuel
+rho_fuel=fuel_selection('MMH',Temp); %MMH, Hydrazine
 
-%rho_fuel = 0.780e-3; % kg/cm^3 (MMH)
-%rho_ox = 1.45e-3; % kg/cm^3 (N2O4)
-
-
-%% Pressure losses
-
-DP_inj = 0.3*P_ch; %(worst value)
-DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
+% Oxidizer
+rho_ox=ox_selection('N2O4',Temp); %N2O4, MON-1, MON-2, MON-3, Hydrazine
 
 %% Computations
 
@@ -42,6 +35,13 @@ Mox = Mprop-Mfuel;
 
 Vox = Mox/rho_ox*10^-6; %m3
 Vfuel = Mfuel/rho_fuel*10^-6;
+
+%% Pressure losses
+
+DP_inj = 0.3*P_ch; %(worst value)
+DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
+
+
 
 %% Tanks sizing
 
@@ -78,5 +78,31 @@ switch material
     case 'Ti6Al4V'
         rho_m = 4433; %kg/cc
         sigma_tum = 950e6; %Pa
+end
+end
+
+% Oxidizer
+function [rho_ox]=ox_selection(oxidizer,Temp)
+switch oxidizer
+    case 'N2O4' 
+        rho_ox = 2.066 - 1.979e-3*Temp -4.826e-7*Temp^2; % g/cc
+    case 'MON-1'
+        rho_ox = 2.066 - 1.979e-3*Temp -4.826e-7*Temp^2; % g/cc
+    case 'MON-2'
+        rho_ox = 2.066 - 1.979e-3*Temp -4.826e-7*Temp^2; % g/cc
+    case 'MON-3'
+        rho_ox = 2.066 - 1.979e-3*Temp -4.826e-7*Temp^2; % g/cc
+    case 'Hydrazine'
+        rho_ox = 1.23078 -6.2668e-4*Temp - 4.5284e-7*Temp^2; % g/cc
+end
+end
+
+% Fuel
+function [rho_fuel]=fuel_selection(fuel,Temp)
+switch fuel
+    case 'Hydrazine'
+        rho_fuel = 1.23078 -6.2668e-4*Temp - 4.5284e-7*Temp^2; % g/cc
+    case 'MMH'
+        rho_fuel = 1.15034-9.3949e-4*Temp; % g/cc
 end
 end
