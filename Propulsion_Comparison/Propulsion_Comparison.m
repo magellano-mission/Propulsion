@@ -2,6 +2,16 @@
 clearvars
 close all
 clc
+%%% Figure Initialization
+set(0,'DefaultFigureUnits', 'normalized');
+set(0,'DefaultFigurePosition',[0 0 1 1]);
+set(0,'DefaultTextFontSize',16);
+set(0,'DefaultAxesFontSize',16);
+set(0,'DefaultAxesXGrid','on')
+set(0,'DefaultAxesYGrid','on')
+set(0,'defaultLegendInterpreter','latex');
+set(0,'defaultAxesTickLabelInterpreter','latex');
+%%%
 [motors] = Motor_Data();            %Load all motor data
 
 % Input arrays of payload masses and delta-Vs to observe trends
@@ -107,7 +117,7 @@ end
 %% PROPULSION STAGE MASS PLOT
 %Plots the sum of propellant mass and motor hardware. Mass of plumbing,
 % tanks, pressurant, pumps etc are not considered
-subplot(2,2,1)
+% subplot(2,2,1)
 hold on
 clearvars i
 for i = 1:length(motors)
@@ -119,7 +129,23 @@ zlabel('Propulsion Stage Mass (kg)')
 axis vis3d
 grid on
 view(45,15)
-hold off
+% hold off
+blank1 = NaN(1,length(mass_pay));
+blank2 = NaN(1,length(dV));
+blank3 = NaN (length(mass_pay),length(dV));
+
+% subplot(2,2,4)
+% hold on
+% clearvars i
+for i = 1:length(motors)
+    surf(blank1, blank2, blank3, 'LineStyle', 'none','FaceColor',colours(i,:),'DisplayName', ...
+        [motors(i).name ' - '  motors(i).class ' - ' num2str(motors(i).thrust,4) ' N' ' (' motors(i).state ')'])
+end
+
+set(gca,'Visible','Off')
+legend('Location', 'northwest')
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+% hold off
 %% PROPELLANT VOLUME PLOT
 %Plots the volume of propellant required. Assumptions regarding density and
 % pressure are stated in the Motor_Data.m input file
