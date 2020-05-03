@@ -16,25 +16,25 @@ Mfin = 6*300+1*800; % mass of a stack
 Temp= 293.15;
 
 % Fuel
-rho_fuel=fuel_selection('MMH',Temp); %MMH, Hydrazine
+rho_fuel=fuel_selection('MMH',Temp)*1e3; %MMH, Hydrazine [kg/m3]
 
 % Oxidizer
-rho_ox=ox_selection('N2O4',Temp); %N2O4, MON-1, MON-2, MON-3, Hydrazine
+rho_ox=ox_selection('N2O4',Temp)*1e3; %N2O4, MON-1, MON-2, MON-3, Hydrazine [kg/m3]
 
 %% Computations
 
 DeltaV = 1800;
 r = exp(DeltaV/(g0*Isp));
 M0 = r*Mfin;
-Mprop = M0*(1-1/r);
+Mprop = M0*(1-1/r); %kg
 
 OF = rho_ox/rho_fuel;
 
 Mfuel = Mprop/(1+OF);
 Mox = Mprop-Mfuel;
 
-Vox = Mox/rho_ox*10^-6; %m3
-Vfuel = Mfuel/rho_fuel*10^-6; %m3
+Vox = Mox/rho_ox; %m3
+Vfuel = Mfuel/rho_fuel; %m3
 
 %% Pressure losses
 
@@ -92,8 +92,8 @@ m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 function [rho_m,sigma_tum]=tankmaterial(material)
 switch material
     case 'Al2024T3' 
-        rho_m = 2780; %kg/cc
-        sigma_tum = 345e6; %MPa
+        rho_m = 2780; %kg/m3
+        sigma_tum = 345e6; %Pa
     case 'Stainless steel'
         rho_m = 7850;
         sigma_tum = 673e6;
@@ -101,7 +101,7 @@ switch material
         rho_m = 7850;
         sigma_tum = 745e6;
     case 'Ti6Al4V'
-        rho_m = 4433; %kg/cc
+        rho_m = 4430; %kg/m3
         sigma_tum = 950e6; %Pa
 end
 end
