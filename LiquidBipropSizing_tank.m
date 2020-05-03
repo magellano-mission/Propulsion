@@ -71,6 +71,22 @@ m_pg = gamma_pg*P_tank*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
 V_pg = m_pg*R_pg*T_pg/Pi_pg;
 m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 
+% ITERATIVE PROCEDURE: 1 TANK CASE
+% Pi_pg = 10*P_tank; Pf_pg = P_tank;
+% Ti_pg = 273; %K
+% Vt = Vox+Vfuel;
+% Tf_pg = Ti_pg*(Pf_pg/Pi_pg)^((gamma_pg-1)/gamma_pg);
+% Vi_pg = 0; toll = 0.01; err = toll + 1;
+% while err > toll
+%     Vf_pg = Vi_pg + Vt;
+%     m_pg = Pf_pg*Vf_pg/(R_pg*Tf_pg);
+%     Vi_pgnew = m_pg*R_pg*Ti_pg/Pi_pg;
+%     err = abs(Vi_pgnew-Vi_pg)/Vi_pg;
+%     Vi_pg = Vi_pgnew;
+% end
+% Mpressurant = 1.05*m_pg; %safety factor
+% Vpressurant = Mpressurant*R_pg*Ti_pg/Pi_pg;
+
 %% Useful functions
 % Tank materials
 function [rho_m,sigma_tum]=tankmaterial(material)
@@ -121,7 +137,7 @@ function [gamma_pg,R_pg]=pressurant_selection(pressurant)
 switch pressurant
     case 'He'
         gamma_pg = 1.667;
-        R_pg = 0.208;
+        R_pg = 2.08; %KJ/kgK
     case 'N'
         gamma_pg = 1.4;
         R_pg = 0.297;
