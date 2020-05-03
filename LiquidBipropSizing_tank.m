@@ -64,7 +64,7 @@ m_tank_C = rho_m*pi*((h_tank_C+t_tank_C)*(r_tank_C+t_tank_C)^2-h_tank_C*r_tank_C
 [rho_mpg,sigma_tumpg]=tankmaterial('Ti6Al4V');
 % Assume:
 Pi_pg = 10*P_tank;
-T_pg = 273; %K
+T_pg = 300; %K
 Pf_pg = P_tank;
 
 m_pg = gamma_pg*P_tank*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
@@ -137,9 +137,9 @@ function [gamma_pg,R_pg]=pressurant_selection(pressurant)
 switch pressurant
     case 'He'
         gamma_pg = 1.667;
-        R_pg = 2.08; %KJ/kgK
+        R_pg = 2.08e3; %J/kgK
     case 'N'
         gamma_pg = 1.4;
-        R_pg = 0.297;
+        R_pg = 0.297e3;
 end
 end
