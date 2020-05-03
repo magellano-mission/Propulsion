@@ -15,22 +15,22 @@ set(0,'defaultAxesTickLabelInterpreter','latex');
 [motors] = Motor_Data();            %Load all motor data
 
 % Input arrays of payload masses and delta-Vs to observe trends
-mass_pay = linspace(0,500,100);     %[kg] payload mass array
-dV = linspace(1500,2500,100);      %[m/s] delta V of burn array
+mass_pay = linspace(0,5000,500);     %[kg] payload mass array
+dV = linspace(0,3000,500);      %[m/s] delta V of burn array
 
 %Input a particular case to get numerical outputs
 payload = 250;  %[kg]
 delta_v = 200;  %[m/s]
 
 %Input boundary conditions to filter motors
-max_t_burn = 60*24*3600;            %[s]    maximum burn time allowable
-min_thrust = 0.1;                   %[N]    minimum thrust of interest
-max_thrust = 5000;                  %[N]    maximum thrust of interest
-min_isp = 290;                      %[s]    maximum isp of interest
+max_t_burn = 30*24*3600;            %[s]    maximum burn time allowable
+min_thrust = 0;                   %[N]    minimum thrust of interest
+max_thrust = inf;                  %[N]    maximum thrust of interest
+min_isp = 0;                      %[s]    maximum isp of interest
 max_isp = inf;                      %[s]    minimum isp of interest
-max_power = 2e5;                   %[W]    maximum power consumption allowable
-classes = ["chemical biprop", "ion", "hall effect"];
-% all classes - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect"
+max_power = 5000;                   %[W]    maximum power consumption allowable
+classes = ["chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"];
+% all    - "chemical monoprop", "chemical biprop", "ion", "chemical solid", "hall effect", "electro-thermal"
 
 %% FILTERING OF INPUT DATA
 %Incompatible motors are filtered by thrust and power constraints.
@@ -95,11 +95,22 @@ while i <= length(motors)
     end
  
 end
-% Creating an array of default MATLAB colours for the surface plots to use
-% Need to add more or use random colours if large number of motors will be
-% plotted at one time
+
+%% CREATING COLOURS FOR SURFACE PLOTS
+% Creating an array of MATLAB colours for the surface plots to use. Seems
+% shitty but I couldn't find another way quickly
+clearvars i
+rand_colours = zeros(50,3);
+for i = 1:50
+    rand_colours(i,1) = rand();
+    rand_colours(i,2) = rand();
+    rand_colours(i,3) = rand();
+end
+
 colours = [1 0 0; 1 0 1; 0 1 1; 1 1 0; 0 1 0; 0 0 1; 0, 0.4470, 0.7410; ...
-    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; 0.25, 0.25, 0.25];
+    0.4940, 0.1840, 0.5560; 0.4660, 0.6740, 0.1880; 0.6350, 0.0780, 0.1840; ...
+    0.25, 0.25, 0.25; rand_colours];
+
 %% CALCULATE SYSTEM PROPERTIES
 clearvars i
 for i = 1:length(motors)  %calculate mass, volume and burn time ARRAYS
@@ -114,6 +125,7 @@ for i = 1:length(motors)  %calculate mass, volume, and burn time PARTICULAR CASE
     disp(motors(i).name)
     disp(motors(i).case)
 end
+
 %% PROPULSION STAGE MASS PLOT
 %Plots the sum of propellant mass and motor hardware. Mass of plumbing,
 % tanks, pressurant, pumps etc are not considered
@@ -129,6 +141,7 @@ zlabel('Propulsion Stage Mass (kg)')
 axis vis3d
 grid on
 view(45,15)
+% <<<<<<< HEAD:Propulsion_Comparison/Propulsion_Comparison.m
 % hold off
 blank1 = NaN(1,length(mass_pay));
 blank2 = NaN(1,length(dV));
@@ -146,6 +159,10 @@ set(gca,'Visible','Off')
 legend('Location', 'northwest')
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 % hold off
+% =======
+hold off
+
+% >>>>>>> f049a6b7ee0391299d0a6e042f1b89750e4d03a1:Propulsion_Comparison/Prop_Comparison.m
 %% PROPELLANT VOLUME PLOT
 %Plots the volume of propellant required. Assumptions regarding density and
 % pressure are stated in the Motor_Data.m input file
@@ -162,6 +179,7 @@ axis vis3d
 grid on
 view(45,15)
 hold off
+
 %% BURN TIME PLOT
 %Plots the time required to complete the burn for given delta v and
 % payload mass combinations. Note that the z axis is logarithmic for
@@ -179,11 +197,12 @@ xlabel('Payload Mass (kg)')
 ylabel('Burn Delta V (m/s)')
 zlabel('Burn Time (s)')
 view(45,15)
-zlim([0 inf])
+zlim([0 max_t_burn*2])
 axis vis3d
 grid on
 set(gca,'ZScale','log')
 hold off
+
 %% DUMMY PLOT
 % Shitty workaround in order to display the legend separate to figures
 blank1 = NaN(1,length(mass_pay));
@@ -195,7 +214,7 @@ hold on
 clearvars i
 for i = 1:length(motors)
     surf(blank1, blank2, blank3, 'LineStyle', 'none','FaceColor',colours(i,:),'DisplayName', ...
-        [motors(i).name ' - '  motors(i).class ' - ' num2str(motors(i).thrust,4) ' N' ' (' motors(i).state ')'])
+        [motors(i).name ' - '  motors(i).class ' - ' num2str(motors(i).thrust,5) ' N' ' (' motors(i).state ')'])
 end
 
 set(gca,'Visible','Off')
