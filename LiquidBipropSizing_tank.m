@@ -34,14 +34,12 @@ Mfuel = Mprop/(1+OF);
 Mox = Mprop-Mfuel;
 
 Vox = Mox/rho_ox*10^-6; %m3
-Vfuel = Mfuel/rho_fuel*10^-6;
+Vfuel = Mfuel/rho_fuel*10^-6; %m3
 
 %% Pressure losses
 
 DP_inj = 0.3*P_ch; %(worst value)
 DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
-
-
 
 %% Tanks sizing
 
@@ -61,14 +59,25 @@ h_tank_C = 3*r_tank_C; %m
 t_tank_C = P_tank*r_tank_C/(2*sigma_tum); %m
 m_tank_C = rho_m*pi*((h_tank_C+t_tank_C)*(r_tank_C+t_tank_C)^2-h_tank_C*r_tank_C^2); %kg
 
+%% Pressurisation system
+[gamma_pg,R_pg]=pressurant_selection('He'); %He, N
+[rho_mpg,sigma_tumpg]=tankmaterial('Ti6Al4V');
+% Assume:
+Pi_pg = 10*P_tank;
+T_pg = 273; %K
+Pf_pg = P_tank;
 
+m_pg = gamma_pg*P_tank*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
+V_pg = m_pg*R_pg*T_pg/Pi_pg;
+m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 
+%% Useful functions
 % Tank materials
 function [rho_m,sigma_tum]=tankmaterial(material)
 switch material
     case 'Al2024T3' 
         rho_m = 2780; %kg/cc
-        sigma_tum = 345e6; %Pa
+        sigma_tum = 345e6; %MPa
     case 'Stainless steel'
         rho_m = 7850;
         sigma_tum = 673e6;
@@ -104,5 +113,17 @@ switch fuel
         rho_fuel = 1.23078 -6.2668e-4*Temp - 4.5284e-7*Temp^2; % g/cc
     case 'MMH'
         rho_fuel = 1.15034-9.3949e-4*Temp; % g/cc
+end
+end
+
+% Pressurant
+function [gamma_pg,R_pg]=pressurant_selection(pressurant)
+switch pressurant
+    case 'He'
+        gamma_pg = 1.667;
+        R_pg = 0.208;
+    case 'N'
+        gamma_pg = 1.4;
+        R_pg = 0.297;
 end
 end
