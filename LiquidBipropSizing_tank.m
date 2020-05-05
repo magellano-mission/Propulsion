@@ -33,8 +33,8 @@ OF = rho_ox/rho_fuel;
 Mfuel = Mprop/(1+OF);
 Mox = Mprop-Mfuel;
 
-Vox = Mox/rho_ox; %m3
-Vfuel = Mfuel/rho_fuel; %m3
+Vox = 1.03*Mox/rho_ox; %m3 (margined 3%)
+Vfuel = 1.03*Mfuel/rho_fuel; %m3 (margined 3%)
 
 %% Pressure losses
 
@@ -73,7 +73,7 @@ m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 
 % ITERATIVE PROCEDURE: 1 TANK CASE
 % Pi_pg = 10*P_tank; Pf_pg = P_tank;
-% Ti_pg = 273; %K
+% Ti_pg = 300; %K
 % Vt = Vox+Vfuel;
 % Tf_pg = Ti_pg*(Pf_pg/Pi_pg)^((gamma_pg-1)/gamma_pg);
 % Vi_pg = 0; toll = 0.01; err = toll + 1;
