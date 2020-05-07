@@ -37,7 +37,7 @@ r = exp(deltav/(g0*Isp));
 M0 = r*Msat;
 Mprop = M0*(1-1/r); %kg
 Vprop = Mprop/rho_prop;
-
+Vprop = Vprop*1.03: %ullage percentage
 
 %% Tanks sizing
 % Pressure losses
@@ -45,7 +45,6 @@ DP_inj = 0.3*P_ch; %(worst value)
 DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
 % Tank pressure
 P_tank = P_ch + DP_feed + DP_inj; %Pa
-P_tank = P_tank*1.03; % ullage percentage
 
 % Tank material
 [rho_m,sigma_tum]=tankmaterial('Ti6Al4V'); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
@@ -59,8 +58,8 @@ switch Ntank
         Pf_pg = P_tank;
         Mpressurant = gamma_pg*P_tank*(Vprop)/(R_pg*Temp*(1-Pf_pg/Pi_pg));
         Vpressurant = Mpressurant*R_pg*Temp/Pi_pg;
-        Vtot = Vpressurant + 1.03*Vprop;
-        r_tank_S = ((3/4)*(1.03*Vprop/pi))^(1/3); %m
+        Vtot = Vpressurant + Vprop;
+        r_tank_S = ((3/4)*(Vprop/pi))^(1/3); %m
         t_tank_S = P_tank*r_tank_S/sigma_tum; %m
         Mtank_S = rho_m*(4/3)*pi*((r_tank_S+t_tank_S)^3-r_tank_S^3);
         Msys = Msat+Mprop+Mpressurant+Mtank_S
@@ -70,7 +69,7 @@ switch Ntank
         Mpressurant = gamma_pg*P_tank*(Vprop)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
         Vpressurant = Mpressurant*R_pg*T_pg/Pi_pg;
         % Spherical tanks
-        r_tank_S = ((3/4)*(1.03*Vprop/pi))^(1/3); %m
+        r_tank_S = ((3/4)*(Vprop/pi))^(1/3); %m
         t_tank_S = P_tank*r_tank_S/sigma_tum; %m
         Mtank_S = rho_m*(4/3)*pi*((r_tank_S+t_tank_S)^3-r_tank_S^3); %kg
         Mtankpressurant = 3*rho_m*Pi_pg*Vpressurant/(2*sigma_tum);

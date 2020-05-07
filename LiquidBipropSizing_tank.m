@@ -44,8 +44,6 @@ DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
 %% Tanks sizing
 
 P_tank = P_ch + DP_feed + DP_inj; %Pa
-P_tank = P_tank*1.03; % ullage percentage
-
 
 % Tank material
 [rho_m,sigma_tum]=tankmaterial('Ti6Al4V'); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
