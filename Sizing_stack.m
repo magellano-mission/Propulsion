@@ -66,7 +66,7 @@ P_tank = Pc + DP_feed + DP_inj; %Pa
 
 % Tank material
 tankmat = 'CFRP+Al';
-[rho_m,sigma_tum]=tankmaterial(tankmat); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
+[rho_m,sigma_tum]=tankmaterial(tankmat); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel, CFRP+Al
 
 % Tanks
 Stack.tankprop = struct(); Stack.tankprop.geometry = 'Cylinder'; %'Sphere' or 'Cylinder'
