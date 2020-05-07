@@ -67,7 +67,7 @@ Pi_pg = 10*P_tank;
 T_pg = 300; %K
 Pf_pg = P_tank;
 
-m_pg = gamma_pg*P_tank*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
+m_pg = gamma_pg*P_tank*1.03*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
 V_pg = m_pg*R_pg*T_pg/Pi_pg;
 m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 
