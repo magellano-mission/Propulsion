@@ -37,7 +37,6 @@ r = exp(deltav/(g0*Isp));
 M0 = r*Msat;
 Mprop = M0*(1-1/r); %kg
 Vprop = Mprop/rho_prop;
-Vprop = Vprop*1.03: %ullage percentage
 
 %% Tanks sizing
 % Pressure losses
@@ -56,13 +55,13 @@ Ntank = 1; %1: prop+press together, 2: prop, press
 switch Ntank
     case 1
         Pf_pg = P_tank;
-        Mpressurant = gamma_pg*P_tank*(Vprop)/(R_pg*Temp*(1-Pf_pg/Pi_pg));
+        Mpressurant = gamma_pg*P_tank*(1.03*Vprop)/(R_pg*Temp*(1-Pf_pg/Pi_pg));
         Vpressurant = Mpressurant*R_pg*Temp/Pi_pg;
-        Vtot = Vpressurant + Vprop;
-        r_tank_S = ((3/4)*(Vprop/pi))^(1/3); %m
+        Vtot = Vpressurant + 1.03*Vprop;
+        r_tank_S = ((3/4)*(Vtot/pi))^(1/3); %m
         t_tank_S = P_tank*r_tank_S/sigma_tum; %m
         Mtank_S = rho_m*(4/3)*pi*((r_tank_S+t_tank_S)^3-r_tank_S^3);
-        Msys = Msat+Mprop+Mpressurant+Mtank_S
+        Msys = Msat+Mprop+Mpressurant+Mtank_S;
     case 2
         T_pg = 300; %K
         Pf_pg = P_tank;

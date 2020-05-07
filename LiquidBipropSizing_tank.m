@@ -33,8 +33,8 @@ OF = rho_ox/rho_fuel;
 Mfuel = Mprop/(1+OF);
 Mox = Mprop-Mfuel;
 
-Vox = 1.03*Mox/rho_ox; %m3 (margined 3%)
-Vfuel = 1.03*Mfuel/rho_fuel; %m3 (margined 3%)
+Vox = Mox/rho_ox; %m3 (margined 3%)
+Vfuel = Mfuel/rho_fuel; %m3 (margined 3%)
 
 %% Pressure losses
 
@@ -49,12 +49,12 @@ P_tank = P_ch + DP_feed + DP_inj; %Pa
 [rho_m,sigma_tum]=tankmaterial('Ti6Al4V'); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
 
 % Spherical tanks
-r_tank_S = ((3/4)*(Vox/pi))^(1/3); %m
+r_tank_S = ((3/4)*(1.03*Vox/pi))^(1/3); %m
 t_tank_S = P_tank*r_tank_S/sigma_tum; %m
 m_tank_S = rho_m*(4/3)*pi*((r_tank_S+t_tank_S)^3-r_tank_S^3); %kg
 
 % Cylindrical tanks - consider r/h=1/3
-r_tank_C = (Vox/(3*pi))^(1/3); %m
+r_tank_C = (1.03*Vox/(3*pi))^(1/3); %m
 h_tank_C = 3*r_tank_C; %m
 t_tank_C = P_tank*r_tank_C/(2*sigma_tum); %m
 m_tank_C = rho_m*pi*((h_tank_C+t_tank_C)*(r_tank_C+t_tank_C)^2-h_tank_C*r_tank_C^2); %kg
@@ -67,7 +67,7 @@ Pi_pg = 10*P_tank;
 T_pg = 300; %K
 Pf_pg = P_tank;
 
-m_pg = gamma_pg*P_tank*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
+m_pg = gamma_pg*P_tank*1.03*(Vfuel+Vox)/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
 V_pg = m_pg*R_pg*T_pg/Pi_pg;
 m_tankpg = 3*rho_mpg*Pi_pg*V_pg/(2*sigma_tumpg);
 
