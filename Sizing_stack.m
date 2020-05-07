@@ -10,6 +10,7 @@ set(0,'DefaultAxesXGrid','on')
 set(0,'DefaultAxesYGrid','on')
 set(0,'defaultLegendInterpreter','latex');
 set(0,'defaultAxesTickLabelInterpreter','latex');
+
 %% Data
 g0 = 9.807;
 Stack = struct();
@@ -24,15 +25,13 @@ dv_oraisingECS = 150; %m/s (TBD)
 dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS;
           dv_capture+dv_TCMs;
           dv_capture+dv_TCMs;
-          dv_capture+dv_TCMs;
-          dv_capture+dv_TCMs + dv_oraisingECS];
+          dv_capture+dv_TCMs];
 % Stack properties (30% mass margin)
-mNS = 250; mRS = 100; mECS = 600; mstack = 800; %TBD
-Stack.Mdry = [6*mNS + mstack;
-                6*mNS + mstack; 
-                6*mNS + mstack;
-                5*mRS + mstack;
-                2*mECS + mstack];
+mNS = 250; mRS = 150; mECS = 600; m_servmod = 800; %TBD
+Stack.Mdry = [6*mNS + m_servmod;
+                6*mNS + m_servmod; 
+                6*mNS + m_servmod;
+                5*mRS + 2*mECS + m_servmod];
 Stack.dv = dv;
 % Engine S-400-15 (Ariane)
 Isp = 318; %s
@@ -48,7 +47,7 @@ rho_ox=ox_selection('N2O4',Temp)*1e3; %[kg/m3]
 %% Propellant
 r = exp(dv/(g0*Isp));
 % Ullage (3%) considered
-for k=1:5
+for k=1:4
     Mst = Stack.Mdry(k);         Stack.mass(k) = Mst;
     M0 = r(k)*Mst;
     Mprop = M0*(1-1/r(k));
@@ -62,6 +61,8 @@ for k=1:5
 end
 
 Stack.Mstack = Stack.Mdry + Stack.Mfuel' + Stack.Mox'; % initial mass stack
+Stack.Mlaunch = Stack.Mstack*1.2; % margin for launcher
+
 %% Propellant tank sizing
 
 DP_inj = 0.3*Pc; %(worst value)
@@ -76,7 +77,7 @@ tankmat = 'CFRP+Al';
 Stack.tankprop = struct(); Stack.tankprop.geometry = 'Cylinder'; %'Sphere' or 'Cylinder'
 Stack.tankprop.material = tankmat; Stack.tankprop.P = P_tank;
 % Bladder considered (1%)
-for k=1:5
+for k=1:4
     switch Stack.tankprop.geometry
         case 'Sphere'
             Stack.tankprop.V(k) = max(Stack.Vox(k),Stack.Vfuel(k));
@@ -103,7 +104,7 @@ Pf_pg = P_tank;
 Stack.pressurant = struct();   Stack.pressurant.type = pressurant;
 Stack.pressurant.R = R_pg;     Stack.pressurant.gamma = gamma_pg;
 Stack.pressurant.Pi = Pi_pg;   Stack.pressurant.T = T_pg;
-for k=1:5
+for k=1:4
     Stack.pressurant.m(k) = gamma_pg*P_tank*(Stack.Vfuel(k)+Stack.Vox(k))/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
     Stack.pressurant.V(k) = Stack.pressurant.m(k)*R_pg*T_pg/Pi_pg;
     Stack.pressurant.rtank(k) = ((3/4)*(Stack.Vox(k)/pi))^(1/3); %m
