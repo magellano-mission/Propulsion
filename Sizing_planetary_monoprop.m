@@ -45,6 +45,8 @@ DP_inj = 0.3*P_ch; %(worst value)
 DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
 % Tank pressure
 P_tank = P_ch + DP_feed + DP_inj; %Pa
+P_tank = P_tank*1.03; % ullage percentage
+
 % Tank material
 [rho_m,sigma_tum]=tankmaterial('Ti6Al4V'); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
 % Pressurant properties
