@@ -29,7 +29,7 @@ Msat = 300; %[kg]
 % Propellant
 Temp= 293.15; %[K]
 prop = 'Hydrazine';
-rho_prop=ox_selection(prop,Temp)*1e3; %N2O4, MON-1, MON-2, MON-3, Hydrazine [kg/m3]
+rho_prop=fuel_selection(prop,Temp)*1e3; %Hydrazine, MMH, H2O2 [kg/m3]
 
 %% Propellant mass and volume
 % Tsiolkovsky
@@ -116,6 +116,8 @@ switch fuel
         rho_fuel = 1.23078 -6.2668e-4*Temp - 4.5284e-7*Temp^2; % g/cc
     case 'MMH'
         rho_fuel = 1.15034-9.3949e-4*Temp; % g/cc
+    case 'H2O2' %hydrogen peroxide
+        rho_fuel = 1.0479 + 2.455*10^-3 + 1.781*10^(-5) - 6.76*10^(-4)*(Temp-273.15) -2.4*10^(-7)*(Temp-273.15)^2 -3.98*10^(-6)*(Temp-273.15);
 end
 end
 

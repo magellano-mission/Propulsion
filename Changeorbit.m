@@ -14,7 +14,7 @@ set(0,'defaultLegendInterpreter','latex');
 set(0,'defaultAxesTickLabelInterpreter','latex');
 
 %%
-a_target = 11500;
+a_target = 10500;
 e_GNSS = 0;
 i_GNSS = 55;
 mi = 42828.3;                        % mars gravity constant [km^2/s^3]
@@ -24,11 +24,11 @@ n = sqrt(mi/a_target^3);               % mars angular velocity [rad/s]
 
 g0 = 9.81;
 
-%% Homhann transfer (stack)
-
-a_lower = 8000:500:11000; %semi-major axis where we change RAAN
+a_lower = 8000:500:10000; %semi-major axis where we change RAAN
 
 N = length(a_lower);
+
+%% Homhann transfer (stack)
 
 dv_h = zeros(N, 1);
 Mprop = zeros(N, 1);
@@ -149,10 +149,10 @@ zlabel('\Delta_v [km/s]'), title('phasing maneuver')
 
 % Additional plot to check deltaV with minimum number of revolutions
 
-% Nmin = 120;
-% Time_min = Nmin*T/(60*60*24*30); %minimum time of the maneuver (correspondent to Nmin)
-% surf(1:K, Nmin:K/2, dv_phas(:,Nmin:180)', 'EdgeColor', 'none')
-% colorbar; xlabel('phasing angle [deg]'), ylabel('number of revolutions');
-% zlabel('\Delta_v [km/s]'), title('phasing maneuver')
+Nmin = 120;
+Time_min = Nmin*T/(60*60*24*30); %minimum time of the maneuver (correspondent to Nmin)
+surf(1:K, Nmin:K/2, dv_phas(:,Nmin:180)', 'EdgeColor', 'none')
+colorbar; xlabel('phasing angle [deg]'), ylabel('number of revolutions');
+zlabel('\Delta_v [km/s]'), title('phasing maneuver')
 
 
