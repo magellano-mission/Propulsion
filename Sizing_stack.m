@@ -11,10 +11,26 @@ set(0,'defaultLegendInterpreter','latex');
 set(0,'defaultAxesTickLabelInterpreter','latex');
 %% Data
 g0 = 9.807;
+Stack = struct();
 % dv needed (capture+TCM+margin 30%)
 dv_capture = 1800; %m/s
 dv_TCMs = 100; %m/s
-dv = 1.3*(dv_capture+dv_TCMs);
+dv_oraisingNS = 290; %m/s
+dv_oraisingECS = 150; %m/s (TBD)
+%%% LAUNCH STRATEGY:
+%    L1: 12 NS
+%    L2: 6 NS, 5 RS, 2 ECS
+dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS;
+          dv_capture+dv_TCMs+dv_oraisingNS;
+          dv_capture+dv_TCMs;
+          dv_capture+dv_TCMs+dv_oraisingECS];
+% Stack properties (30% mass margin)
+mNS = 200; mRS = 200; mECS = 600; mstack = 0; %TBD
+Stack.Mstack = [12*mNS + mstack; 
+                6*mNS + mstack;
+                5*mRS + mstack;
+                2*mECS + mstack]*1.3;
+Stack.dv = dv;
 % Engine S-400-15 (Ariane)
 Isp = 318; %s
 T = 420; %N
@@ -25,21 +41,14 @@ mdot = T/(Isp*g0);
 Temp= 293.15; %[K]
 rho_fuel=fuel_selection('Hydrazine',Temp)*1e3; %[kg/m3]
 rho_ox=ox_selection('N2O4',Temp)*1e3; %[kg/m3]
-% Stack properties (30% mass margin)
-Stack = struct();
-mNS = 200; mRS = 200; mECS = 600; mstack = 200;
-Stack.Mstack = [4*mRS*1.3 + mstack; 
-                10*mNS*1.3 + mstack;
-                5*mNS*1.3 + mstack;
-                3*mECS*1.3 + mstack];
 
 %% Propellant
 r = exp(dv/(g0*Isp));
 % Ullage (3%) considered
 for k=1:4
     Mst = Stack.Mstack(k);         Stack.mass(k) = Mst;
-    M0 = r*Mst;
-    Mprop = M0*(1-1/r);            Stack.Mprop(k) = Mprop;  
+    M0 = r(k)*Mst;
+    Mprop = M0*(1-1/r(k));
     OF = rho_ox/rho_fuel;
     Mfuel = Mprop/(1+OF);    
     Mox = Mprop-Mfuel;
@@ -94,7 +103,7 @@ for k=1:4
     Stack.pressurant.m(k) = gamma_pg*P_tank*(Stack.Vfuel(k)+Stack.Vox(k))/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
     Stack.pressurant.V(k) = Stack.pressurant.m(k)*R_pg*T_pg/Pi_pg;
     Stack.pressurant.rtank(k) = ((3/4)*(Stack.Vox(k)/pi))^(1/3); %m
-    Stack.pressurant.ttank(k) = P_tank*r/sigma_tum; %m
+    Stack.pressurant.ttank(k) = P_tank*r(k)/sigma_tum; %m
     Stack.pressurant.mtank(k) = 3*rho_mpg*Pi_pg*Stack.pressurant.V(k)/(2*sigma_tumpg);
 end
 
