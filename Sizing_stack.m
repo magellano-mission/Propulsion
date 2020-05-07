@@ -35,35 +35,48 @@ Stack.Mstack = [4*mRS*1.3 + mstack;
 
 %% Propellant
 r = exp(dv/(g0*Isp));
+% Ullage (3%) considered
 for k=1:4
     Mst = Stack.Mstack(k);         Stack.mass(k) = Mst;
     M0 = r*Mst;
-    Mprop = M0*(1-1/r);      
+    Mprop = M0*(1-1/r);            Stack.Mprop(k) = Mprop;  
     OF = rho_ox/rho_fuel;
     Mfuel = Mprop/(1+OF);    
     Mox = Mprop-Mfuel;
-    Vox = 1.03*Mox/rho_ox; %m3 (margined 3%)
-    Vfuel = 1.03*Mfuel/rho_fuel; %m3 (margined 3%)
+    Vox = 1.03*Mox/rho_ox; %m3
+    Vfuel = 1.03*Mfuel/rho_fuel; %m3
     Stack.Mfuel(k) = Mfuel; Stack.Mox(k) = Mox;
     Stack.Vfuel(k) = Vfuel; Stack.Vox(k) = Vox;
 end
 
-%% Propellant tank sizinf
+%% Propellant tank sizing
 
 DP_inj = 0.3*Pc; %(worst value)
 DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
 P_tank = Pc + DP_feed + DP_inj; %Pa
 
 % Tank material
-tankmat = 'Ti6Al4V';
+tankmat = 'CFRP+Al';
 [rho_m,sigma_tum]=tankmaterial(tankmat); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel 
 
-% Spherical tanks
-Stack.tankprop = struct(); Stack.tankprop.material = tankmat; Stack.tankprop.P = P_tank;
+% Tanks
+Stack.tankprop = struct(); Stack.tankprop.geometry = 'Cylinder'; %'Sphere' or 'Cylinder'
+Stack.tankprop.material = tankmat; Stack.tankprop.P = P_tank;
+% Bladder considered (1%)
 for k=1:4
-    Stack.tankprop.r(k) = ((3/4)*(Stack.Vox(k)/pi))^(1/3); %m
-    Stack.tankprop.t(k) = P_tank*r/sigma_tum; %m
-    Stack.tankprop.m(k) = rho_m*(4/3)*pi*((Stack.tankprop.r(k)+Stack.tankprop.t(k))^3-Stack.tankprop.r(k)^3); %kg
+    switch Stack.tankprop.geometry
+        case 'Sphere'
+            Stack.tankprop.V(k) = 1.01*max(Stack.Vox(k),Stack.Vfuel(k));
+            Stack.tankprop.r(k) = ((3/4)*(Stack.tankprop.V(k)/pi))^(1/3); %m
+            Stack.tankprop.t(k) = P_tank*r/sigma_tum; %m
+            Stack.tankprop.m(k) = rho_m*(4/3)*pi*((Stack.tankprop.r(k)+Stack.tankprop.t(k))^3-Stack.tankprop.r(k)^3);%kg
+        case 'Cylinder'    
+            Stack.tankprop.V(k) = 1.01*max(Stack.Vox(k),Stack.Vfuel(k));
+            Stack.tankprop.r(k) = (Stack.tankprop.V(k)/(3*pi))^(1/3); %m
+            Stack.tankprop.h(k) = 3*Stack.tankprop.r(k); %m
+            Stack.tankprop.t(k) = P_tank*Stack.tankprop.r(k)/(2*sigma_tum); %m
+            Stack.tankprop.m(k) = rho_m*pi*((Stack.tankprop.h(k)+Stack.tankprop.t(k))*(Stack.tankprop.r(k)+Stack.tankprop.t(k))^2-Stack.tankprop.h(k)*Stack.tankprop.r(k)^2); %kg
+    end
 end
 
 %% Pressurisation system
