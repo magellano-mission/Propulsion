@@ -1,5 +1,4 @@
-%% Interplanetary primary propulsion system sizing (chemical monoprop)
-
+%% Interplanetary primary propulsion system sizing (chemical biprop)
 clear; close all; clc
 % Figure Initialization
 set(0,'DefaultFigureUnits', 'normalized');
@@ -17,13 +16,14 @@ Stack = struct();
 % dv needed (capture+TCM+margin 30%)
 dv_capture = 1800; %m/s
 dv_TCMs = 320; %m/s
-dv_oraisingNS = 290; %m/s
+dv_oraisingNS1 = 290; %m/s
+dv_oraisingNS2 = 70; %m/s
 dv_oraisingECS = 150; %m/s (TBD)
 %%% LAUNCH STRATEGY:
 %    L1: 6 NS + 6 NS
-%    L2: 6 NS, 5 RS, 2 ECS
-dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS;
-          dv_capture+dv_TCMs;
+%    L2: 6 NS + 5 RS, 2 ECS
+dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS1;
+          dv_capture+dv_TCMs+dv_oraisingNS2;
           dv_capture+dv_TCMs;
           dv_capture+dv_TCMs];
 % Stack properties (30% mass margin)
@@ -58,6 +58,20 @@ for k=1:4
     Vfuel =Mfuel/rho_fuel; %m3
     Stack.Mfuel(k) = Mfuel; Stack.Mox(k) = Mox;
     Stack.Vfuel(k) = Vfuel; Stack.Vox(k) = Vox;
+    if k==4
+        r4 = exp((dv_oraisingECS)/(g0*Isp));
+        M4 = r4*(2*mECS+m_servmod);
+        Mprop = M4*(1-1/r4);
+        OF = rho_ox/rho_fuel;
+        Mfuel = 1.035*Mprop/(1+OF);    
+        Mox = 1.035*(Mprop-Mfuel);
+        Vox =Mox/rho_ox; %m3
+        Vfuel =Mfuel/rho_fuel; %m3
+        Stack.Mfuel(k) = Mfuel+Stack.Mfuel(k); 
+        Stack.Mox(k) = Mox+Stack.Mox(k);
+        Stack.Vfuel(k) = Vfuel+Stack.Vfuel(k); 
+        Stack.Vox(k) = Vox+Stack.Vox(k);
+    end
 end
 
 Stack.Mstack = Stack.Mdry + Stack.Mfuel' + Stack.Mox'; % initial mass stack
@@ -70,11 +84,11 @@ DP_feed = 50e3; % worst value (depends on cross section of feeding lines)
 P_tank = Pc + DP_feed + DP_inj; %Pa
 
 % Tank material
-tankmat = 'CFRP+Al';
+tankmat = 'Ti6Al4V';
 [rho_m,sigma_tum]=tankmaterial(tankmat); %Ti6Al4V, Al2024T3, Stainless steel, Alloy steel, CFRP+Al
 
 % Tanks
-Stack.tankprop = struct(); Stack.tankprop.geometry = 'Cylinder'; %'Sphere' or 'Cylinder'
+Stack.tankprop = struct(); Stack.tankprop.geometry = 'Sphere'; %'Sphere' or 'Cylinder'
 Stack.tankprop.material = tankmat; Stack.tankprop.P = P_tank;
 % Bladder considered (1%)
 for k=1:4
@@ -82,7 +96,7 @@ for k=1:4
         case 'Sphere'
             Stack.tankprop.V(k) = max(Stack.Vox(k),Stack.Vfuel(k));
             Stack.tankprop.r(k) = ((3/4)*(Stack.tankprop.V(k)/pi))^(1/3); %m
-            Stack.tankprop.t(k) = P_tank*r/sigma_tum; %m
+            Stack.tankprop.t(k) = P_tank*r(k)/sigma_tum; %m
             Stack.tankprop.m(k) = rho_m*(4/3)*pi*((Stack.tankprop.r(k)+Stack.tankprop.t(k))^3-Stack.tankprop.r(k)^3);%kg
         case 'Cylinder'    
             Stack.tankprop.V(k) = max(Stack.Vox(k),Stack.Vfuel(k));
