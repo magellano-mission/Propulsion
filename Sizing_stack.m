@@ -16,8 +16,8 @@ Stack = struct();
 % dv needed (capture+TCM+margin 30%)
 dv_capture = 1800; %m/s
 dv_TCMs = 320; %m/s
-dv_oraisingNS1 = 280; %m/s
-dv_oraisingNS2 = 70; %m/s
+dv_oraisingNS1 = 150; %m/s
+dv_oraisingNS2 = 50; %m/s
 dv_oraisingECS = 180; %m/s (TBD)
 %%% LAUNCH STRATEGY:
 %    L1: 6 NS + 6 NS
