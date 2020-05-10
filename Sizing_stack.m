@@ -33,9 +33,9 @@ Stack.Mdry = [6*mNS + m_servmod;
                 6*mNS + m_servmod;
                 5*mRS + 2*mECS + m_servmod];
 Stack.dv = dv;
-% Engine S-400-15 (Ariane)
-Isp = 318; %s
-T = 420; %N
+% Engine 
+Isp = 320; %s
+T = 890; %N
 Pc = 10e5; %Pa
 %MMH+N2O4
 mdot = T/(Isp*g0);
@@ -121,7 +121,7 @@ Stack.pressurant.Pi = Pi_pg;   Stack.pressurant.T = T_pg;
 for k=1:4
     Stack.pressurant.m(k) = gamma_pg*P_tank*(Stack.Vfuel(k)+Stack.Vox(k))/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
     Stack.pressurant.V(k) = Stack.pressurant.m(k)*R_pg*T_pg/Pi_pg;
-    Stack.pressurant.rtank(k) = ((3/4)*(Stack.Vox(k)/pi))^(1/3); %m
+    Stack.pressurant.rtank(k) = ((3/4)*(Stack.pressurant.V(k)/pi))^(1/3); %m
     Stack.pressurant.ttank(k) = P_tank*Stack.pressurant.rtank(k)/sigma_tum; %m
     Stack.pressurant.mtank(k) = rho_mpg*(4/3)*pi*((Stack.pressurant.rtank(k)+Stack.pressurant.ttank(k))^3-Stack.pressurant.rtank(k)^3);
 end
