@@ -96,7 +96,7 @@ for k=1:4
         case 'Sphere'
             Stack.tankprop.V(k) = max(Stack.Vox(k),Stack.Vfuel(k));
             Stack.tankprop.r(k) = ((3/4)*(Stack.tankprop.V(k)/pi))^(1/3); %m
-            Stack.tankprop.t(k) = P_tank*r(k)/sigma_tum; %m
+            Stack.tankprop.t(k) = P_tank*Stack.tankprop.r(k)/sigma_tum; %m
             Stack.tankprop.m(k) = rho_m*(4/3)*pi*((Stack.tankprop.r(k)+Stack.tankprop.t(k))^3-Stack.tankprop.r(k)^3);%kg
         case 'Cylinder'    
             Stack.tankprop.V(k) = max(Stack.Vox(k),Stack.Vfuel(k));
@@ -122,6 +122,6 @@ for k=1:4
     Stack.pressurant.m(k) = gamma_pg*P_tank*(Stack.Vfuel(k)+Stack.Vox(k))/(R_pg*T_pg*(1-Pf_pg/Pi_pg));
     Stack.pressurant.V(k) = Stack.pressurant.m(k)*R_pg*T_pg/Pi_pg;
     Stack.pressurant.rtank(k) = ((3/4)*(Stack.Vox(k)/pi))^(1/3); %m
-    Stack.pressurant.ttank(k) = P_tank*r(k)/sigma_tum; %m
-    Stack.pressurant.mtank(k) = 3*rho_mpg*Pi_pg*Stack.pressurant.V(k)/(2*sigma_tumpg);
+    Stack.pressurant.ttank(k) = P_tank*Stack.pressurant.rtank(k)/sigma_tum; %m
+    Stack.pressurant.mtank(k) = rho_mpg*(4/3)*pi*((Stack.pressurant.rtank(k)+Stack.pressurant.ttank(k))^3-Stack.pressurant.rtank(k)^3);
 end
