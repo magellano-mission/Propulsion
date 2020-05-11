@@ -14,19 +14,21 @@ set(0,'defaultAxesTickLabelInterpreter','latex');
 g0 = 9.807;
 Stack = struct();
 % dv needed (capture+TCM+margin 30%)
-dv_capture = 1800; %m/s
-dv_TCMs = 320; %m/s
-dv_oraisingNS1 = 150; %m/s
-dv_oraisingNS2 = 50; %m/s
+dv_captureSM1 = 1730; %m/s
+dv_captureSM2 = 1730; %m/s
+dv_captureSM3 = 1850; %m/s
+dv_captureSM4 = 1850; %m/s
+dv_TCMs = 315; %m/s
+dv_oraisingNS1 = 50; dv_oraisingNS2 = 150; 
 dv_oraisingECS = 180; %m/s (TBD)
 dv_EoLstack = 200; %m/s
 %%% LAUNCH STRATEGY:
 %    L1: 6 NS + 6 NS
 %    L2: 6 NS + 5 RS, 2 ECS
-dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS1;
-          dv_capture+dv_TCMs+dv_oraisingNS2;
-          dv_capture+dv_TCMs;
-          dv_capture+dv_TCMs];
+dv = 1.3*[dv_captureSM1+dv_TCMs+dv_oraisingNS1;
+          dv_captureSM2+dv_TCMs+dv_oraisingNS2;
+          dv_captureSM3+dv_TCMs;
+          dv_captureSM4+dv_TCMs];
 % Stack properties (30% mass margin)
 mNS = 250; mRS = 150; mECS = 600; m_servmod = 800; %TBD
 Stack.Mdry = [6*mNS + m_servmod;
