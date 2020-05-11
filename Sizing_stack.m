@@ -15,9 +15,9 @@ g0 = 9.807;
 Stack = struct();
 % dv needed (capture+TCM+margin 30%)
 dv_captureSM1 = 1730; %m/s
-dv_captureSM2 = 1730; %m/s
-dv_captureSM3 = 1850; %m/s
-dv_captureSM4 = 1850; %m/s
+dv_captureSM2 = 1710; %m/s
+dv_captureSM3 = 1820; %m/s
+dv_captureSM4 = 1890; %m/s
 dv_TCMs = 315; %m/s
 dv_oraisingNS1 = 50; dv_oraisingNS2 = 150; 
 dv_oraisingECS = 180; %m/s (TBD)
@@ -25,6 +25,7 @@ dv_EoLstack = 200; %m/s
 %%% LAUNCH STRATEGY:
 %    L1: 6 NS + 6 NS
 %    L2: 6 NS + 5 RS, 2 ECS
+% 30% margin on dv
 dv = 1.3*[dv_captureSM1+dv_TCMs+dv_oraisingNS1;
           dv_captureSM2+dv_TCMs+dv_oraisingNS2;
           dv_captureSM3+dv_TCMs;
@@ -87,7 +88,7 @@ for k=1:4
     Stack.Mfuel(k) = VfuelEOL(k)*rho_fuel + Stack.Mfuel(k); 
     Stack.Mox(k)   = VoxEOL(k)*rho_ox + Stack.Mox(k);
     Stack.Vfuel(k) = VfuelEOL(k) + Stack.Vfuel(k); 
-    Stack.Vox(k) = VoxEOL(k) + Stack.Vox(k);
+    Stack.Vox(k)   = VoxEOL(k) + Stack.Vox(k);
     Stack.Mprop(k) = Stack.Mfuel(k) + Stack.Mox(k);
 end
 
