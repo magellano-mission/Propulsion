@@ -19,6 +19,7 @@ dv_TCMs = 320; %m/s
 dv_oraisingNS1 = 150; %m/s
 dv_oraisingNS2 = 50; %m/s
 dv_oraisingECS = 180; %m/s (TBD)
+dv_EoLstack = 200; %m/s
 %%% LAUNCH STRATEGY:
 %    L1: 6 NS + 6 NS
 %    L2: 6 NS + 5 RS, 2 ECS
@@ -72,6 +73,18 @@ for k=1:4
         Stack.Vfuel(k) = Vfuel+Stack.Vfuel(k); 
         Stack.Vox(k) = Vox+Stack.Vox(k);
     end
+    rEOL = exp((dv_EoLstack)/(g0*Isp));
+    MEOL = rEOL*(m_servmod);
+    MpropEOL = MEOL*(1-1/rEOL);
+    OFEOL = rho_ox/rho_fuel;
+    MfuelEOL = 1.035*MpropEOL/(1+OFEOL);    
+    MoxEOL = 1.035*(MpropEOL-MfuelEOL);
+    VoxEOL =MoxEOL/rho_ox; %m3
+    VfuelEOL =MfuelEOL/rho_fuel; %m3
+    Stack.Mfuel(k) = MfuelEOL+Stack.Mfuel(k); 
+    Stack.Mox(k) = MoxEOL+Stack.Mox(k);
+    Stack.Vfuel(k) = VfuelEOL+Stack.Vfuel(k); 
+    Stack.Vox(k) = VoxEOL+Stack.Vox(k);
 end
 
 Stack.Mstack = Stack.Mdry + Stack.Mfuel' + Stack.Mox'; % initial mass stack
