@@ -30,9 +30,9 @@ dv = 1.3*[dv_capture+dv_TCMs+dv_oraisingNS1;
 % Stack properties (30% mass margin)
 mNS = 250; mRS = 150; mECS = 600; m_servmod = 800; %TBD
 Stack.Mdry = [6*mNS + m_servmod;
-                6*mNS + m_servmod; 
-                6*mNS + m_servmod;
-                5*mRS + 2*mECS + m_servmod];
+              6*mNS + m_servmod; 
+              6*mNS + m_servmod;
+              5*mRS + 2*mECS + m_servmod];
 Stack.dv = dv;
 % Engine 
 Isp = 320; %s
@@ -48,15 +48,16 @@ rho_ox=ox_selection('N2O4',Temp)*1e3; %[kg/m3]
 %% Propellant
 r = exp(dv/(g0*Isp));
 % Ullage (3%) considered
+MpropEOL=zeros(1,4); MfuelEOL=zeros(1,4); MoxEOL=zeros(1,4); VfuelEOL=zeros(1,4); VoxEOL=zeros(1,4);
 for k=1:4
     Mst = Stack.Mdry(k);         Stack.mass(k) = Mst;
     M0 = r(k)*Mst;
     Mprop = M0*(1-1/r(k));
     OF = rho_ox/rho_fuel;
     Mfuel = 1.035*Mprop/(1+OF);    
-    Mox = 1.035*(Mprop-Mfuel);
-    Vox =Mox/rho_ox; %m3
-    Vfuel =Mfuel/rho_fuel; %m3
+    Mox   = 1.035*(Mprop-Mfuel);
+    Vox   = Mox/rho_ox; %m3
+    Vfuel = Mfuel/rho_fuel; %m3
     Stack.Mfuel(k) = Mfuel; Stack.Mox(k) = Mox;
     Stack.Vfuel(k) = Vfuel; Stack.Vox(k) = Vox;
     if k==4
@@ -75,20 +76,20 @@ for k=1:4
     end
     rEOL = exp((dv_EoLstack)/(g0*Isp));
     MEOL = rEOL*(m_servmod);
-    MpropEOL = MEOL*(1-1/rEOL);
     OFEOL = rho_ox/rho_fuel;
-    MfuelEOL = 1.035*MpropEOL/(1+OFEOL);    
-    MoxEOL = 1.035*(MpropEOL-MfuelEOL);
-    VoxEOL =MoxEOL/rho_ox; %m3
-    VfuelEOL =MfuelEOL/rho_fuel; %m3
-    Stack.Mfuel(k) = MfuelEOL+Stack.Mfuel(k); 
-    Stack.Mox(k) = MoxEOL+Stack.Mox(k);
-    Stack.Vfuel(k) = VfuelEOL+Stack.Vfuel(k); 
-    Stack.Vox(k) = VoxEOL+Stack.Vox(k);
+    MpropEOL(k) = MEOL*(1-1/rEOL);
+    MfuelEOL(k) = 1.035*MpropEOL(k)/(1+OFEOL);    
+    MoxEOL(k)   = 1.035*(MpropEOL(k)-MfuelEOL(k));
+    VoxEOL(k)   = MoxEOL(k)/rho_ox; %m3
+    VfuelEOL(k) = MfuelEOL(k)/rho_fuel; %m3
+    Stack.Mfuel(k) = MfuelEOL(k) + Stack.Mfuel(k); 
+    Stack.Mox(k)   = MoxEOL(k) + Stack.Mox(k);
+    Stack.Vfuel(k) = VfuelEOL(k) + Stack.Vfuel(k); 
+    Stack.Vox(k) = VoxEOL(k) + Stack.Vox(k);
 end
 
 Stack.Mstack = Stack.Mdry + Stack.Mfuel' + Stack.Mox'; % initial mass stack
-Stack.Mlaunch = Stack.Mstack*1.2; % margin for launcher
+Stack.Mlaunch = 1.2*Stack.Mstack; % margin for launcher
 
 %% Propellant tank sizing
 
