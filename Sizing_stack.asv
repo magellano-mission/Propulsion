@@ -58,7 +58,7 @@ for k=1:4
     Mox   = Mprop-Mfuel;
     Vox   = 1.035*Mox/rho_ox; %m3
     Vfuel = 1.035*Mfuel/rho_fuel; %m3
-    Stack.Mfuel(k) = Vfuel*rho_fuel; Stack.Mox(k) = Vox*rho_ox;
+    Stack.Mfuel(k) = Vfuel/rho_fuel; Stack.Mox(k) = Voc/rho_ox;
     Stack.Vfuel(k) = Vfuel; Stack.Vox(k) = Vox;
     if k==4
         r4 = exp((dv_oraisingECS)/(g0*Isp));
@@ -67,10 +67,10 @@ for k=1:4
         OF = rho_ox/rho_fuel;
         Mfuel = Mprop/(1+OF);    
         Mox = Mprop-Mfuel;
-        Vox = 1.035*Mox/rho_ox; %m3
+        Vox = 1.035Mox/rho_ox; %m3
         Vfuel = 1.035*Mfuel/rho_fuel; %m3
-        Stack.Mfuel(k) = Vfuel*rho_fuel+Stack.Mfuel(k); 
-        Stack.Mox(k) = Vox*rho_ox+Stack.Mox(k);
+        Stack.Mfuel(k) = Vfuel/rho_fuel+Stack.Mfuel(k); 
+        Stack.Mox(k) = Vox/rho_ox+Stack.Mox(k);
         Stack.Vfuel(k) = Vfuel+Stack.Vfuel(k); 
         Stack.Vox(k) = Vox+Stack.Vox(k);
     end
@@ -79,14 +79,13 @@ for k=1:4
     OFEOL = rho_ox/rho_fuel;
     MpropEOL(k) = MEOL*(1-1/rEOL);
     MfuelEOL(k) = MpropEOL(k)/(1+OFEOL);    
-    MoxEOL(k)   = MpropEOL(k)-MfuelEOL(k);
+    MoxEOL(k)   = MpropEOL(k)-MfuelEOL(k));
     VoxEOL(k)   = 1.035*MoxEOL(k)/rho_ox; %m3
     VfuelEOL(k) = 1.035*MfuelEOL(k)/rho_fuel; %m3
-    Stack.Mfuel(k) = VfuelEOL(k)*rho_fuel + Stack.Mfuel(k); 
-    Stack.Mox(k)   = VoxEOL(k)*rho_ox + Stack.Mox(k);
+    Stack.Mfuel(k) = VfuelEOL(k)/rho_fuel + Stack.Mfuel(k); 
+    Stack.Mox(k)   = MoxEOL(k) + Stack.Mox(k);
     Stack.Vfuel(k) = VfuelEOL(k) + Stack.Vfuel(k); 
     Stack.Vox(k) = VoxEOL(k) + Stack.Vox(k);
-    Stack.Mprop(k) = Stack.Mfuel(k) + Stack.Mox(k);
 end
 
 Stack.Mstack = Stack.Mdry + Stack.Mfuel' + Stack.Mox'; % initial mass stack
