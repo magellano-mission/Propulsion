@@ -52,8 +52,8 @@ rho_prop=fuel_selection(prop,Temp)*1e3; %Hydrazine, MMH, H2O2 [kg/m3]
 for k = 1:3
 % Tsiolkovsky
         r = exp(Satellite.deltav(k)/(g0*Isp));
-        M0 = r*Satellite.sat_masses(k); % satellite initial mass
-        Mprop = M0*(1-1/r); %kg  propellant mass needed
+        Mf = Satellite.sat_masses(k)/r; % satellite final mass
+        Mprop = Satellite.sat_masses(k)-Mf; %kg  propellant mass needed
         Satellite.Mprop_real(k) = Mprop*1.035; %margin of 3% of unusable propellant and 0.5 for loading uncertainty
 
 % Tank volume estimation 
@@ -70,8 +70,8 @@ for k = 1:3
 
 % spherical
         Satellite.r_tank_S(k) = ((3/4)*(Satellite.V_tank(k)/pi))^(1/3); %m
-        t_tank_S = Ptank_in*Satellite.r_tank_S(k)/sigma_tum; %m (intial pressure since worst condition)
-        Satellite.Mtank_S(k) = rho_m*(4/3)*pi*((Satellite.r_tank_S(k)+t_tank_S)^3-Satellite.r_tank_S(k)^3);
+        Satellite.t_tank_S(k) = Ptank_in*Satellite.r_tank_S(k)/sigma_tum; %m (intial pressure since worst condition)
+        Satellite.Mtank_S(k) = rho_m*(4/3)*pi*((Satellite.r_tank_S(k)+Satellite.t_tank_S(k))^3-Satellite.r_tank_S(k)^3);
 
 
 % Pressurizing gas mass
