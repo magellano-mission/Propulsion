@@ -143,3 +143,11 @@ for k=1:4
     Stack.pressurant.ttank(k) = P_tank*Stack.pressurant.rtank(k)/sigma_tum; %m
     Stack.pressurant.mtank(k) = rho_mpg*(4/3)*pi*((Stack.pressurant.rtank(k)+Stack.pressurant.ttank(k))^3-Stack.pressurant.rtank(k)^3);
 end
+%% Launch masses
+Stack.launch = struct();
+    Stack.launch.mass(1) = Stack.Mstack(1)+Stack.Mstack(2);
+    Stack.launch.mass(2) = Stack.Mstack(3)+Stack.Mstack(4);
+% Launch Vehicle Adapter (LVA)
+Stack.launch.MLVA = 0.0755.*Stack.launch.mass + 50.252;
+
+Stack.launch.Mlaunch = 1.2.*(Stack.launch.mass+Stack.launch.MLVA);
