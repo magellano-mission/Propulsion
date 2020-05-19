@@ -125,7 +125,7 @@ legend(horzcat(strcat('a = ', " ", string(a_lower))))
 %% LT Eletric transfer (stack)
 
 mass = 300*6+1000;                  % mass [kg]
-T = 0.1:0.005:1;             % thrust [N]
+T = 0.1:0.05:0.5;             % thrust [N]
 at = T/mass*1e-3;             % transversal acceleration [km/s^2]
 
 a_lower = [10000 12300];
@@ -142,22 +142,6 @@ ylabel('Electric continuous thrust [N]'), xlabel('tof [months]');
 title('Thrust vs time to reach target orbit')
 legend(horzcat(strcat('a = ', " ", string(a_lower))))
 
-
-mass = 1000+600*2;
-a_target = 7400;
-a_lower = [6400];
-N = length(a_lower);
-
-figure; 
-subplot(1,2,1);
-hold on
-for i = 1:N
-    t = 2*(a_target - a_lower(i))./(at*a_lower(i)*sqrt(a_target/mi))/86400/30; %doubled for eclipse
-    plot(t, T, 'LineWidth', 2)
-end
-ylabel('Electric continuous thrust [N]'), xlabel('tof [months]');
-title('Thrust vs time to reach target orbit')
-legend(horzcat(strcat('a = ', " ", string(a_lower))))
 
 
 %% PHASING
