@@ -35,7 +35,7 @@ B = Ptank_in/Ptank_fin; % blowdown ratio
 deltav_oraising = 0; %done by the stack
 deltav_phasing = 15; %[m/s]
 deltav_SK = 5*10; %[m/s]
-deltav_EoL = 200; %[m/s] CHECK
+deltav_EoL = 0; %[m/s] CHECK
 deltav = (deltav_oraising + deltav_phasing + deltav_SK + deltav_EoL)*1.3; % 30% margin
 
 Msat = 200; %[kg] satellite dry mass (without propellant)

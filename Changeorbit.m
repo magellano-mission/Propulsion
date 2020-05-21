@@ -175,7 +175,7 @@ for i = 1:K                               % i: phasing angle
         ra_phas = a_target;
         rp_phas = 2*a_phas - ra_phas;
         e_phas = (ra_phas - rp_phas)/(ra_phas + rp_phas);
-        v_phas = sqrt(mi/a_phas)*(1 - e_phas)   ;
+        v_phas = sqrt(mi/a_phas)*(1 - e_phas);
         dv_phas(i, j) = 2*abs(v_target - v_phas);
     end
 end

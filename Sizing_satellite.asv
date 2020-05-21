@@ -44,8 +44,7 @@ mNS = 250; mRS = 150; mECS = 600; %TBD dry mass (no propellant)
 Satellite = struct();
 Satellite.sat_masses = [mNS, mRS, mECS];
 Satellite.deltav = [deltav_NS, deltav_RS, deltav_RS];
-M_prop_desat = [5 5 5]; % approximations
-M_prop_detumbl = [0.2 0.2 0.2]; % approximations
+M_prop_desat = [15 15 15];
 
 Temp= 293.15; %[K] tank temperature
 prop = 'Hydrazine';
@@ -84,3 +83,10 @@ for k = 1:3
 
         %Pg_fin = Ptank_in*Vgi/(Vgi + Mprop/rho_prop);
 end
+
+%% Sizing main engine
+
+
+Satellite.mainengine = struct();
+
+Satellite.mainengine.dv_phasing = []
