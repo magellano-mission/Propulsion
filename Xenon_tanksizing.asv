@@ -1,0 +1,34 @@
+%% Xenon tank sizing
+
+clear all, close all, clc
+
+alpha = 6e-3; % Power density [kg/W] (ion thruster)
+Xenon.mass = 37.6; % Propellant mass needed [kg]
+
+% RIT 2X (not enhanced version, max thrust 200 mN)
+ 
+Engine.mass_eng = 8.8; % engine mass [kg]
+Engine.power = 5785; % engine power [W]
+Engine.mass_ppu = alpha*Engine.power; % PPU mass [kg]
+Engine.Isp = 4300;
+
+%%
+
+Xenon.mm = 131.263; % molar mass [g/mol]
+n = Xenon,mass*1000/Xenon.mm; % moles of Xenon
+Xenon.Temp = 323; % temperature [K] (margin from critic temperatur 289.77 K)
+Xenon.P = 150e5; % initial pressure [Pa] (check this value from tank)
+
+R = 8.314; % universal gas constant [J/(kg*K)]
+
+a = 4.192*0.1; % Van der Waals constant [Pa*m^6/mol^2]
+b = 0.05156*0.001; % Van der Waals constant [m^3/mol]
+
+func = @(x) (Xenon.P + (n^2*a/(x^2)))*(x-n*b) - n*Xenon.mm*0.001*R*Xenon.Temp;
+Xenon.V = fzero(func,0.05);
+
+%% Tank
+
+Engine.mass_tank = 50; % mass of selected tank [kg]
+
+Engine.mass_tot = Engine.mass_tank + Engine.mass_ppu + Engine.mass_eng + 
